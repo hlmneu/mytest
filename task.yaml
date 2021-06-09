@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: tekton-task-assignment
+spec:
+  params:
+    - name: hello-world-message
+      type: string
+      default: "Hello, world!"
+  steps:
+    - image: quay.io/ibmgaragecloud/alpine-curl
+      name: first-step
+      resources: {}
+      script: |
+        mkdir /workspace/k8s
+        cd /workspace/k8s
+        curl https://raw.githubusercontent.com/tektoncd/pipeline/main/examples/v1beta1/taskruns/run-steps-as-non-root.yaml > run-steps-as-non-root.yaml
+        touch run-steps-as-non-root-task-only.yaml
+        head -n 24 run-steps-as-non-root.yaml > run-steps-as-non-root-task-only.yaml
+        sed  "s/ubuntu/quay.io\/ibmgaragecloud\/alpine-curl/" run-steps-as-non-root.yaml > run-steps-as-non-root-alpine-task.yaml
